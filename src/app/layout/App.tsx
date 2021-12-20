@@ -1,9 +1,10 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import axios from 'axios';
-import { Container, Header, List } from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react';
 import { Activity } from '../../models/activity';
 import NavBar from './NavBar';
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
+import { v4 as uuid } from 'uuid';
 
 function App() {
 
@@ -37,9 +38,17 @@ function App() {
     setEditMode(false);
   }
 
+  function handleCreateOrEditActivity(activity: Activity) {
+    activity.id
+      ? setActivities([...activities.filter(a => a.id !== activity.id), activity])
+      : setActivities([...activities, { ...activity, id: uuid() }])
+    setEditMode(false);
+    setSelectedActivity(activity);
+  }
+
   return (
     <Fragment>
-      <NavBar openForm={handleFormOpen}/>
+      <NavBar openForm={handleFormOpen} />
       <Container style={{ marginTop: '7em' }}>
         <ActivityDashboard
           activities={activities}
@@ -49,6 +58,8 @@ function App() {
           editMode={editMode}
           openForm={handleFormOpen}
           closeForm={handleFormClose}
+          createOrEditForm={handleCreateOrEditActivity}
+
         />
       </Container>
     </Fragment>
