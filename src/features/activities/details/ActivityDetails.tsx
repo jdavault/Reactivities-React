@@ -1,5 +1,4 @@
-import React from 'react'
-import { Card, Image, Icon, ButtonGroup, Button } from 'semantic-ui-react'
+import { Card, Image, ButtonGroup, Button } from 'semantic-ui-react'
 import { Activity } from '../../../models/activity'
 
 interface Props {
