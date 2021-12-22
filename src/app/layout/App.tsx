@@ -1,21 +1,28 @@
 import { useState, useEffect, Fragment } from 'react';
-import axios from 'axios';
 import { Container } from 'semantic-ui-react';
 import { Activity } from '../../models/activity';
 import NavBar from './NavBar';
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
 import { v4 as uuid } from 'uuid';
+import agent from '../api/agent';
+import LoadingComponents from './LoadingComponent';
 
 function App() {
 
   const [activities, setActivities] = useState<Activity[]>([])
   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined)
-  const [editMode, setEditMode] = useState(false)
+  const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get<Activity[]>('http://localhost:5000/api/activities').then(response => {
-      console.log(response)
-      setActivities(response.data)
+    agent.Activities.list().then(response => {
+      let activities: Activity[] = [];
+      response.forEach(activity => {
+        activity.date = activity.date.split('T')[0];
+        activities.push(activity)
+      })
+      setActivities(activities)
+      setLoading(false);
     })
   }, [])
 
@@ -50,7 +57,7 @@ function App() {
     setActivities([...activities.filter(a => a.id !== id)])
   }
 
-
+  if (loading) return <LoadingComponents content="Loading..." />
   return (
     <Fragment>
       <NavBar openForm={handleFormOpen} />
